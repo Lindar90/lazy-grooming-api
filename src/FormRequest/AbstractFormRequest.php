@@ -9,12 +9,8 @@ abstract class AbstractFormRequest extends Request implements FormRequestInterfa
 {
     protected array $errors = [];
 
-    protected object $dto;
-
     private ValidatorInterface $validator;
-
-    abstract protected function createDTO(): object;
-
+    
     public function __construct(
         ValidatorInterface $validator,
         array              $query = [],
@@ -31,8 +27,8 @@ abstract class AbstractFormRequest extends Request implements FormRequestInterfa
 
     public function isValid(): bool
     {
-        $this->dto = $this->createDTO();
-        $violations = $this->validator->validate($this->dto);
+        $dto = $this->getDTO();
+        $violations = $this->validator->validate($dto);
 
         $this->errors = [];
 
@@ -41,11 +37,6 @@ abstract class AbstractFormRequest extends Request implements FormRequestInterfa
         }
 
         return $violations->count() === 0;
-    }
-
-    public function getDTO(): object
-    {
-        return $this->dto;
     }
 
     public function getErrors(): array
