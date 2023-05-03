@@ -21,5 +21,10 @@ services:
             - '../src/Kernel.php'
             - '../src/Exception/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+    App\ArgumentResolver\CustomRequestResolver:
+        tags:
+            - { name: 'controller.argument_value_resolver', priority: 150 }
+
+json_request:
+    content_types:
+        - json

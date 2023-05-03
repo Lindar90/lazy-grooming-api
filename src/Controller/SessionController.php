@@ -2,15 +2,15 @@
 
 namespace App\Controller;
 
+use App\FormRequest\SessionInitFormRequest;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class SessionController extends AbstractController
 {
     #[Route('/session', name: 'session_init', methods: ['post'])]
-    public function init(Request $request): JsonResponse
+    public function init(SessionInitFormRequest $request): JsonResponse
     {
         return $this->json([
             'message' => 'Welcome to your new controller!',

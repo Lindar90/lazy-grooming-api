@@ -6,7 +6,7 @@ interface FormRequestInterface
 {
     public function isValid(): bool;
 
-    public function getData(): array;
+    public function getDTO(): object;
 
     public function getErrors(): array;
 }

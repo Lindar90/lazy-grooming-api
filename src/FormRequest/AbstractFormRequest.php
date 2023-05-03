@@ -3,21 +3,36 @@
 namespace App\FormRequest;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 abstract class AbstractFormRequest extends Request implements FormRequestInterface
 {
     protected array $errors = [];
 
-    abstract protected function getRules(): array;
+    protected object $dto;
+
+    private ValidatorInterface $validator;
+
+    abstract protected function createDTO(): object;
+
+    public function __construct(
+        ValidatorInterface $validator,
+        array              $query = [],
+        array              $request = [],
+        array              $attributes = [],
+        array              $cookies = [],
+        array              $files = [],
+        array              $server = [],
+        $content = null
+    ) {
+        parent::__construct($query, $request, $attributes, $cookies, $files, $server, $content);
+        $this->validator = $validator;
+    }
 
     public function isValid(): bool
     {
-        $validator = $this->getValidator();
-        $constraints = $this->getConstraints();
-        $violations = $validator->validate($this->request->all(), $constraints);
+        $this->dto = $this->createDTO();
+        $violations = $this->validator->validate($this->dto);
 
         $this->errors = [];
 
@@ -28,23 +43,13 @@ abstract class AbstractFormRequest extends Request implements FormRequestInterfa
         return $violations->count() === 0;
     }
 
-    public function getData(): array
+    public function getDTO(): object
     {
-        return $this->request->all();
+        return $this->dto;
     }
 
     public function getErrors(): array
     {
         return $this->errors;
-    }
-
-    protected function getValidator(): ValidatorInterface
-    {
-        return Validation::createValidator();
-    }
-
-    protected function getConstraints(): Assert\Collection
-    {
-        return new Assert\Collection($this->getRules());
     }
 }
